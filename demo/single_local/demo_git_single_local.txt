@@ -1,0 +1,111 @@
+# git demo. Single developer and local repository.
+
+# First we move to a safe place:
+cd /tmp/
+
+# Run git. It's harmless :-)
+git
+
+# Ask git what it knows about the current directory its parent
+# directories:
+git status
+
+# Introduce yourself to git:
+git config --global user.name "Emanuele Olivetti"
+git config --global user.email "olivetti@fbk.eu"
+
+# ... and check it:
+git config user.name
+git config user.email
+git config -l
+
+# Create a directory where to do version control and enter it:
+mkdir /tmp/demo_git_single_local
+cd /tmp/demo_git_single_local
+
+# Create the git repository within the current directory:
+git init
+# Verify that you have a brand new ".git/" directory:
+ls -al .
+# ...full of interesting things...:
+ls -al .git/
+# Ask git about the current directory:
+git status
+
+# Create a file named hello.py 
+echo "print 'hello.'" > hello.py
+
+# ...check the status:
+git status
+
+# and then put hello.py under git VC.
+# First add hello.py to the staging area:
+git add hello.py
+# Check how the status changes:
+git status
+
+# Now record changes to the master database:
+git commit -m "My first commit. A big step for the mankind."
+
+# Check the status again, it is instructive:
+git status
+
+# Edit hello.py some more:
+echo "import numpy as np" >> hello.py
+echo "print np.random.rand(3)" >> hello.py
+
+# See how the status changes accordingly:
+git status
+
+# show changes between current files and staged files:
+git diff
+
+# Add changes into the staging area (index):
+git add hello.py
+# and see how the status changes accordingly:
+git status
+
+# Edit again hello.py
+echo "print np.eye(4)" >> hello.py
+
+# Commit the changes from the staging area (only):
+git commit -m "Added printout of 3 random numbers."
+
+# Verify that changes not added to the staging area were not recorded:
+git diff
+
+# Commit all changes of hello.py skipping the staging area step:
+git commit hello.py -m "Added beautiful eyes."
+
+# Edit hello.py again and create more files:
+echo "print np.subtract.outer(np.random.rand(3),np.random.rand(2))" >> hello.py
+echo "import time" > clock.py
+echo "print time.ctime()" >> clock.py
+
+# inspect changes before commits:
+git status
+git diff
+
+# commit all changes made in all files skipping staging area:
+git add clock.py
+git commit -a -m "Added a Swiss clock and improved hello.py."
+
+# See the logs of all commits:
+git log
+
+# See the logs of all commits with the git GUI:
+gitk
+
+# Get crazy and mess with your files:
+echo "printttt 'I hate you...'" > hello.py
+rm clock.py
+
+# Oh no! What I've done! Shame on me!
+git status
+git diff
+# Relax buddy... you are using git :-)
+# Get rid of the last untracked changes:
+git checkout .
+ls
+git status
+git diff

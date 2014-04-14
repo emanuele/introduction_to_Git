@@ -1,0 +1,132 @@
+# git demo. Scenario 2: Multiple developers and one remote shared repository.
+
+# Scenario 2a : "user of a remote repository"
+
+# first we move to a safe place:
+cd /tmp
+
+# we are interested in a remote repository. So we clone it.
+git clone https://github.com/emanuele/git-exercise.git
+cd git-exercise
+
+# we can check that we actually have a git repository:
+git status
+
+# git keeps track of the URL of the remote repository:
+git remote -v
+
+# the code we have just retrieved is about social networks:
+python social_network.py
+
+# Since we cloned new updates could be sent by other developers to the
+# remote repository...
+git fetch
+
+# we can have a look to the logs to have more details:
+git log
+
+# ...also from the log's graphical interface:
+gitk --all
+
+# after fetching updates we usually want to merge them too:
+git merge origin/master
+
+# the logs show the new commits:
+git log
+
+# executing the updated code shows what changed:
+python social_network.py
+
+# the graphical interface shows the merge action:
+gitk --all
+
+# now we want to step back to how it was before the last commit.
+git reset --hard HEAD~1
+# or alternatively, use SHA1 or the first clone
+
+# the logs reflect that we stepped back:
+git log
+
+# ...as well as the graphical interface does:
+gitk --all
+
+# we can retrieve the latest updates and merge them in a single command:
+git pull
+
+# and verify that everything went well:
+git log
+gitk --all
+
+# Scenario 2b: "local developer of a remote project"
+# Task1: create a new file in "people/" called <name.surname>.txt
+cat > people/emanuele.olivetti.txt <<EOF
+tiziano zito
+rike benjamin schuppner
+michael hanke
+elefterios garyfallidis
+EOF
+
+# let's see our changes is action:
+python social_network.py
+
+# now we commit our changes:
+git add people/emanuele.olivetti.txt
+git commit -m "Added Emanuele."
+
+# the logs confirm our commit:
+git log
+
+# and we check that our local repository diverged from the remote one.
+gitk --all
+
+# Scenario 2c: "from local developer to contributor"
+# WARNING: some changes could have been pushed remotely by other devels...
+git push
+
+# the error tells us that we must pull latest remote updates first:
+git pull
+
+# we see that new changes arrived and that we merged correctly.
+gitk --all
+
+# executing the program shows the latest updates:
+python social_network.py
+
+# now we can push safely:
+git push
+
+# ...and see that how the logs reflect our push:
+gitk --all
+
+# Scenario 2d: conflicts!
+# We want to add a new feature to the social network graph: a better title.
+# WARNING: Someone else might have done it in remote repo after our
+# last pull...
+emacs social_network.py
+
+# let's check the awesome new title:
+python social_network.py
+
+# let's commit it:
+git commit social_network.py -m "Added cool title."
+
+# we want to push our changes. We pull first:
+git pull
+
+# where is the conflict?
+git diff
+
+# In order to solve the conflict we first edit the conflicting lines:
+emacs social_network.py
+
+# and then check that the code is OK:
+python social_network.py
+
+# we stage the resolution of the conflict and commit it:
+git add social_network.py
+git commit -m "Fixed conflicting titles."
+
+# so that we can push (and pull first!):
+git pull
+git push
+
