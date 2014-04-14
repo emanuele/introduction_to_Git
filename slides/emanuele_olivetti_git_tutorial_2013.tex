@@ -1,0 +1,1035 @@
+\documentclass{beamer}
+\usepackage{xspace}
+
+\mode<presentation>
+%\mode<handout>
+{
+  \usetheme{Luebeck}
+  \usecolortheme{beaver}
+  % \usetheme{Warsaw}
+  % \usecolortheme{default}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+% Enable Bold Typewriter font (\texttt{\textbf{}})
+\DeclareFontShape{OT1}{cmtt}{bx}{n}{<5><6><7><8><9><10><10.95><12><14.4><17.28><20.74><24.88>cmttb10}{}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\newcommand{\Ivec}[1]{\mbox{\boldmath $#1$}}
+\usepackage[normalem]{ulem}
+% \usepackage{tipa}
+\newcommand{\git}{\texttt{\textbf{git}}\xspace}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\setbeamertemplate{footline}[page number]
+
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+\title[A Practical Introduction to \git]{A Practical Introduction to \git}
+
+\author[Emanuele Olivetti]{Emanuele Olivetti}
+
+\institute[FBK/CIMeC]
+{
+  NeuroInformatics Laboratory (NILab)\\
+  Bruno Kessler Foundation (FBK), Trento, Italy\\
+  Center for Mind and Brain Sciences (CIMeC),
+  University of Trento, Italy\\
+  \url{http://nilab.fbk.eu} \\
+  \url{olivetti@fbk.eu}
+}
+
+
+\date[Git Tutorial] % (optional, should be abbreviation of conference name)
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+%% \pgfdeclareimage[height=1.0cm]{fbk-logo}{figs/Logo-fbk}
+%% \logo{\pgfuseimage{fbk-logo}}
+%% \pgfdeclareimage[height=1.0cm]{unitn-alfa-logo}{figs/Logo-unitn-alfa}
+%% \logo{\pgfuseimage{unitn-alfa-logo}}
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+% \beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\lstset{language=bash}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \begin{itemize}
+  \item Version Control: \git.
+  \item Scenario 1: \textbf{single} developer, \textbf{local}
+    repository.
+    \begin{itemize}
+    \item Demo \textbf{single+local}
+    \end{itemize}
+  \item Scenario 2: \textbf{Team} of developers, \textbf{central
+      remote} repository. Minimalistic.
+    \begin{itemize}
+    \item Demo \textbf{multi+remote}
+    \end{itemize}
+  \item Branching.
+  \item Scenario 3: Contributing to a Software Project hosted on
+    \textbf{GitHub}.
+  \item Extras: how to set up centralised repository, and more.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Version Control: Naming \& Meaning}
+  \begin{block}{Wikipedia}
+    ``\emph{Revision control}, also known as \emph{version control},
+    \emph{source control} or \emph{software configuration management}
+    (SCM), is the \alert{management of changes to documents, programs,
+      and other information stored as computer files}.''
+  \end{block}
+  Popular Acronyms:
+  \begin{itemize}
+  \item VC
+  \item SCM
+  \end{itemize}
+  Misnomer:
+  \begin{itemize}
+  \item \sout{Versioning}
+  \end{itemize}
+  \textbf{Q:} have you ever used VC? (raise your hand = YES)
+\end{frame}
+
+\begin{frame}{Version Control: Local, Centralized, Distributed}
+  \includegraphics[width=1.05\linewidth]{figs/vc_paradigms}
+\\
+\small
+From \emph{Pro Git}, S.Chacon 2009, CC 3.0 license.
+\end{frame}
+
+% \begin{frame}{Distributed Version Control}
+%   \begin{block}{Wikipedia: Distributed revision control (or
+%       Distributed Version Control (Systems) (DVCS), or Decentralized
+%       Version Control)}
+%     \emph{``A fairly recent innovation in software revision
+%       control. [...] The line between distributed and centralized
+%       systems is blurring in some regards, especially since DVCSs can
+%       be used in a centralized mode.''}
+%   \end{block}
+%   \begin{itemize}
+%   \item \color{white!30!black}There may be \textbf{many central} repositories.
+%   \item \color{white!50!black}Codes from disparate repositories are merged.
+%   \item \color{white!70!black}Lieutenants dynamically decide which branches to merge.
+%   \item \color{white!80!black}Network is not involved in most operations.
+%   \item \color{white!90!black}\emph{sync} operations are available for
+%     committing or receiving changes with remote repositories.
+%   \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Why \git?}
+% From: \emph{2010 Python Bootcamp}, Day 3 (Peter Williams).
+%   \begin{center}
+%     \textbf{Why We Like Git}
+%   \end{center}
+%   \begin{itemize}
+%   \item \color{white!20!black}{Fundamental reason: extremely
+%       well-engineered, underlying theory is solid. (Turns out Linus
+%       knows what he's doing.)}
+%   \item \color{white!30!black}{Rock-solid reliability}
+%   \item \color{white!40!black}{Very, very fast}
+%   \item \color{white!50!black}{Open-source and Free software}
+%   \item \color{white!60!black}{Ergonomic}
+%   \item \color{white!70!black}{Extremely powerful suite of tools}
+%   \item \color{white!80!black}{Decentralized code-sharing model}
+%   \item \color{white!90!black}{Active, committed developer community}
+%   \item \color{white!95!black}{Secure}
+%   \end{itemize}
+% \end{frame}
+
+\begin{frame}{Survey: \git}
+  \begin{itemize}\setlength{\itemsep}{+3mm}
+  \item Q1: Have you heard about \git?
+  \item Q2: Do you use \git?
+  \item Q3: Why the ``\git'' name? (from \git FAQ)
+    \begin{enumerate}\setlength{\itemsep}{+2mm}
+    \item Random three-letter combination that is pronounceable.
+    \item Acronym (global information tracker).
+    \item Irony.
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{\git? Why ``\git''?}
+  \begin{columns}
+    \begin{column}{5cm}
+      \textbf{Linus Torvalds}: 
+      % ``\emph{I'm an egotistical [sic] bastard, and
+        \emph{``I name all my projects after myself. First Linux, now
+        \git.}''
+      \begin{figure}
+        \centering
+        \includegraphics[width=4cm]{figs/Linus_Torvalds}
+      \end{figure}
+    \end{column}
+    \begin{column}{7cm}
+      \begin{figure}
+        \url{http://www.merriam-webster.com/dictionary/git}
+        \centering
+        \includegraphics[width=7cm]{figs/git-merriam}
+      \end{figure}
+    \end{column}
+    \end{columns}
+\end{frame}
+
+
+\begin{frame}[containsverbatim]{\git}
+  \begin{center}
+  \item \texttt{\textbf{git}}
+  \end{center}
+\begin{verbatim}
+usage: git [OPTIONS] COMMAND [ARGS]
+
+The most commonly used git commands are:
+   add        Add file contents to the index
+   commit     Record changes to the repository
+   diff       Show changes between commits, commit and working tree, etc
+   ...
+\end{verbatim}
+  \begin{center}
+    \texttt{\textbf{git help <command>}}
+  \end{center}
+  \begin{center}
+    \texttt{\textbf{git status}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{\git}
+  Introduce yourself to \git:
+  \begin{center}
+    \small
+    \texttt{\textbf{git config -{}-global user.name "Emanuele Olivetti"}}
+  \end{center}
+  \vspace{0.2cm}
+  \begin{center}
+    \small
+    \texttt{\textbf{git config -{}-global user.email "olivetti@fbk.eu"}}
+  \end{center}
+\end{frame}
+
+\begin{frame}{\git. Single developer + local repository.}
+  \begin{figure}
+    \centering
+    Scenario 1: single developer + local repository.
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Single+Local \git. Motivations.}
+  \begin{itemize}\setlength{\itemsep}{+3mm}
+  \item \textbf{Q:} do you use VC for local repo?
+  \item Why VC for single developer + local repository?
+    \begin{itemize}\setlength{\itemsep}{+2mm}
+    \item First step towards a shared project.
+    \item Backup.
+    \item To keep the memory of your work.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Single+Local \git. Init.}
+  \begin{center}
+    \texttt{\textbf{git init}}
+  \end{center}
+  \begin{itemize}
+  \item Creates an empty \git repository.
+  \item Creates the git directory: \texttt{.git/}
+  \end{itemize}
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-init}
+  \end{figure}
+  Note: it is \textbf{safe}. It does not change your pre-existing
+  files.
+\end{frame}
+
+\begin{frame}{Single+Local \git. The tracking process.}
+  \begin{center}
+    \texttt{\textbf{git add <filename>}}
+  \end{center}
+  \begin{figure}
+    \centering
+    \includegraphics[width=6.5cm]{figs/staging}
+  \end{figure}
+  \begin{center}
+    \texttt{\textbf{git commit -m "Let us begin."}}
+  \end{center}
+
+  \begin{block}{Wikipedia}
+    ``A \emph{staging area} is a location where organisms, people,
+    vehicles, equipment or material are assembled before use''.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Single+Local \git. Add.}
+  \begin{center}
+    \texttt{\textbf{git add file1 [file2 ...]}}
+  \end{center}
+  \begin{itemize}
+  \item Adds new files for next commit.
+  \item Adds content from working dir to the staging area (index) for
+    next commit.
+  \item DOES NOT add info on file permissions other than \emph{exec/noexec}
+    (755 / 644).
+  \item DOES not add directories \emph{per se}.
+  \end{itemize}
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-add}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Single+Local \git. Commit.}
+  \begin{center}
+    \texttt{\textbf{git commit [-m "Commit message."]}}
+  \end{center}
+  Records changes from the staging area to master.
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-commit}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Single+Local \git. Commit.}
+  \begin{center}
+    \texttt{\textbf{git commit file1 file2}}
+  \end{center}
+  Records all changes of \texttt{\textbf{file1}},
+  \texttt{\textbf{file2}} from working dir and staging area to master.
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-commit-filename}
+  \end{figure}
+  \begin{center}
+    \texttt{\textbf{git commit -a}}
+  \end{center}
+  Records all changes in working dir and staging area. \emph{Be Careful!}
+\end{frame}
+
+\begin{frame}[containsverbatim]{Single+Local \git. Commit names. \alert{OPTIONAL}}
+  \begin{itemize}
+  \item Every \emph{commit} is a \git-object.
+  \item The history of a project is a graph of objects referenced by a
+    40-digit \git-name: $SHA1(object)$.
+  \item $SHA1(object)$ = 160-bit Secure Hash Algorithm.
+  \item Examples:
+\begin{verbatim}
+$ git commit README -m "Added README."
+\end{verbatim}
+\texttt{[master \alert{dbb4929}] Added README.}
+\begin{verbatim}
+1 files changed, 1 insertions(+), ...
+\end{verbatim}
+or
+\begin{verbatim}
+$ git log
+\end{verbatim}
+\texttt{commit \alert{dbb49293790b84f0bdcd74fd9fa5cab0...}}
+\begin{verbatim}
+Author: Emanuele Olivetti <olivetti@fbk.eu>
+Date:   Wed Sep 15 00:08:46 2010 +0200
+...
+\end{verbatim}
+  \end{itemize}
+\end{frame}
+% $
+
+\begin{frame}{Single+Local \git. Diff.}
+  \begin{center}
+    \texttt{\textbf{git diff}}
+  \end{center}
+  Shows what changes between \emph{working directory} and
+  \emph{staging area} (\emph{index}).
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-diff}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Single+Local \git. Diff. \alert{OPTIONAL}}
+  \begin{block}{\textbf{Q:} ``\texttt{\textbf{git add}}'' then
+      ``\texttt{\textbf{git diff}}''. What output?}
+    \texttt{\textbf{git diff -{}-cached}} shows differences between
+    index and last commit (\alert{HEAD}).
+  \end{block}
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-diff-cached}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Single+Local \git. Logs.}
+  \begin{center}
+    \texttt{\textbf{git log}}
+  \end{center}
+  Shows details of the commits.
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-log}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Single+Local \git. Logs.}
+  \begin{center}
+    \texttt{\textbf{gitk}}
+  \end{center}
+  GUI to browse the \git repository.
+  \begin{figure}
+    \centering
+    \includegraphics[width=9.4cm]{figs/gitk_cropped}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Single+Local \git. ``How to clean this mess??'' \alert{OPT.}}
+  \begin{center}
+    \texttt{\textbf{git checkout <filename>}}
+  \end{center}
+  Get rid of what changed in \texttt{\textbf{<filename>}} (between
+  working dir and staging area).
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-checkout-file}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Single+Local \git. Time travelling. \alert{OPTIONAL}}
+  Back to the past when you did commit \texttt{\alert{dbb49293790b84...}}
+  \begin{center}
+    \texttt{\textbf{git checkout \alert{dbb4929}}}
+  \end{center}
+  ...and now, \emph{back to the present!}
+  \begin{center}
+    \texttt{\textbf{git checkout \alert{master}}}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Single+Local \git. ``How to clean this mess??''. \alert{OPT.}}
+  First read \emph{carefully} \texttt{\textbf{git status}}. If you panic:
+  \begin{center}
+    \texttt{\textbf{git reset -{}-hard HEAD}}
+  \end{center}
+  Restore all files as in the last commit.
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/local-reset-hard}
+  \end{figure}
+Warning: \alert{\texttt{reset} can destroy history!}
+\end{frame}
+
+\begin{frame}{Single+Local \git. (Re)move. \alert{OPTIONAL}}
+  \alert{Warning}: whenever you want to \emph{remove}, \emph{move} or
+  \emph{rename} a tracked file use \git:
+  \begin{center}
+    \texttt{\textbf{git rm <filename>}}
+  \end{center}
+  \begin{center}
+    \texttt{\textbf{git mv <oldname> <newname>}}
+  \end{center}
+Remember to \texttt{\textbf{commit}} these changes!
+  \begin{center}
+    \texttt{\textbf{git commit -m "File (re)moved."}}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Single+Local \git. Demo.}
+  \begin{center}
+    Demo: \texttt{\textbf{demo\_git\_single\_local.txt}}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{multi+remote/shared \git.}
+  \begin{figure}
+    \centering
+    Scenario 2: multiple developers + remote central repository.
+  \end{figure}
+\end{frame}
+
+\begin{frame}{multi+remote/shared \git.}
+  \begin{figure}
+    \centering
+    \includegraphics[width=10cm]{figs/workflow-a}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{multi+remote/shared \git.}
+  \begin{figure}
+    \centering
+    \includegraphics[width=11cm]{figs/local-remote}
+  \end{figure}  
+\end{frame}
+
+\begin{frame}{multi+remote/shared \git.}
+  \begin{center}
+    \texttt{\textbf{git clone <URL>}}
+  \end{center}
+  \uncover<2->{Creates \alert{\emph{two}} local copies of the
+    \alert{whole} remote repository.}
+  \begin{figure}
+    \begin{center}
+      \includegraphics<1>[width=9cm]{figs/local-remote-before-clone}
+      \includegraphics<2>[width=9cm]{figs/local-remote-clone2}
+    \end{center}
+  \end{figure}
+  \uncover<2->{Available transport protocols:
+  \begin{itemize}
+  \item \texttt{\textbf{ssh://}}, \texttt{\textbf{git://}},
+    \texttt{\textbf{http://}}, \texttt{\textbf{https://}},
+    \texttt{\textbf{file://}}
+  \end{itemize}
+  Ex.: \small{\texttt{\textbf{git clone https://github.com/ASPP/pelita.git}}}
+  \begin{center}
+    \texttt{\textbf{git remote -v}}
+  \end{center}
+  shows \textbf{name} and \texttt{\textbf{URL}} of the remote repository.}
+\end{frame}
+
+\begin{frame}{multi+remote/shared \git. Fetch.}
+  \begin{center}
+    \texttt{\textbf{git fetch}}
+  \end{center}
+  \begin{itemize}
+  \item Downloads updates from remote master to local remote master.
+  \item The local master, staging area and working directory do not
+    change.
+  \end{itemize}
+  \begin{figure}
+    \centering
+    \includegraphics[width=9.5cm]{figs/local-remote-fetch}
+  \end{figure}
+  \begin{block}{\small{\textbf{Q:} Why \textbf{origin}?}}
+      \small{\textbf{A:} Just a label for \textbf{Remote}. Choose the one you like.}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}{multi+remote/shared \git. Merge.}
+  \begin{center}
+    \texttt{\textbf{git merge}}
+  \end{center}
+  \begin{itemize}
+  \item Joins development histories together.
+  \item \alert{Warning}: can generate \emph{conflicts}!
+  \item \textbf{Note}: it merges only when all changes are committed.
+  \end{itemize}
+  \begin{figure}
+    \centering
+    \includegraphics[width=9.5cm]{figs/local-remote-merge}
+  \end{figure}
+  \begin{center}
+    \texttt{\textbf{git fetch}} + \texttt{\textbf{git merge}} = \texttt{\textbf{git pull}}
+  \end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]{multi+remote/shared \git. Conflicts.}
+  \begin{center}
+    \alert{Conflict!}
+  \end{center}
+\begin{verbatim}
+  ...
+  <<<<<<< yours:sample.txt
+  Conflict resolution is hard;
+  let's go shopping.
+  =======
+  Git makes conflict resolution easy.
+  >>>>>>> theirs:sample.txt
+  ...
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}{multi+remote/shared \git. Conflicts.}
+How to resolve conflicts.
+\begin{enumerate}
+\item See where conflicts are:
+  \begin{center}
+  \texttt{\textbf{git diff}}
+  \end{center}
+\item Edit conflicting lines.
+\item Add changes to the staging area:
+  \begin{center}
+    \texttt{\textbf{git add file1 [...]}}
+  \end{center}
+\item Commit changes:
+  \begin{center}
+    \texttt{\textbf{git commit -m "Conflicts solved."}}
+  \end{center}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{multi+remote/shared \git.}
+  \begin{center}
+    \texttt{\textbf{git push}}
+  \end{center}
+  \begin{itemize}
+  \item Updates \emph{remote masters} (both Local and Remote).
+  \item Requires \texttt{\textbf{fetch}}+\texttt{\textbf{merge}} first.
+  \end{itemize}
+  \begin{figure}
+    \centering
+    \includegraphics[width=9.5cm]{figs/local-remote-push}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{multi+remote/shared \git.}
+  \begin{center}
+    Demo: \texttt{\textbf{demo\_git\_multi\_remote.txt}}.
+  \end{center}
+  Other related files:
+  \begin{itemize}
+  \item \texttt{\textbf{create\_remote\_repo\_sn.sh}}
+  \item \texttt{\textbf{collaborator1.sh}}
+  \item \texttt{\textbf{collaborator2.sh}}
+  \item \texttt{\textbf{collaborator2.sh}}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Branching.}
+  \begin{figure}
+    \centering
+    basic branching
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Branching.}
+  \begin{columns}
+    \begin{column}{0.6\linewidth}
+      \begin{center}
+        \includegraphics[width=6cm]{figs/18333fig0310-tn}
+      \end{center}
+    \end{column}
+    \begin{column}{0.4\linewidth}
+      \begin{center}
+        \texttt{\textbf{git commit (C0)}}\\
+        \texttt{\textbf{git commit (C1)}}\\
+        \texttt{\textbf{git commit (C2)}}
+      \end{center}
+    \end{column}
+  \end{columns}
+  \vspace{1em}
+  \begin{center}
+    \includegraphics[width=9cm]{figs/local-remote-clone}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Branching.}
+  \begin{columns}
+    \begin{column}{0.6\linewidth}
+      \begin{center}
+        \includegraphics[width=6cm]{figs/18333fig0311-tn}
+      \end{center}
+    \end{column}
+    \begin{column}{0.45\linewidth}
+        \uncover<1->\texttt{\textbf{git branch iss53}}\\
+        \uncover<2->\texttt{\textbf{git checkout iss53}}\\
+        \uncover<3->\texttt{\textbf{git checkout master}}
+    \end{column}
+  \end{columns}
+  \begin{center}
+    \includegraphics<1>[width=9cm]{figs/git-branch}
+    \includegraphics<2>[width=9cm]{figs/git-checkout}
+    \includegraphics<3>[width=9cm]{figs/git-branch}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Branching.}
+  \begin{columns}
+    \begin{column}{0.6\linewidth}
+      \begin{center}
+        \includegraphics[width=6cm]{figs/18333fig0312-tn}
+      \end{center}
+    \end{column}
+    \begin{column}{0.4\linewidth}
+      \begin{center}
+        \texttt{\textbf{git checkout iss53}}\\
+        \texttt{\textbf{git commit (C3)}}
+      \end{center}
+    \end{column}
+  \end{columns}
+  \begin{center}
+    \includegraphics[width=9cm]{figs/git-checkout}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Branching.}
+  \begin{columns}
+    \begin{column}{0.6\linewidth}
+      \begin{center}
+        \includegraphics<1>[width=5.5cm]{figs/18333fig0313b-tn}
+        \includegraphics<2>[width=5.5cm]{figs/18333fig0313-tn}
+      \end{center}
+    \end{column}
+    \begin{column}{0.45\linewidth}
+      \begin{center}
+        \uncover<1->\texttt{\textbf{git branch hotfix}}\\
+        \uncover<2->\texttt{\textbf{git checkout hotfix}}\\
+        \uncover<2->\texttt{\textbf{git commit (C4)}}\\
+      \end{center}
+    \end{column}
+  \end{columns}
+  \begin{center}
+    \includegraphics<1>[width=9cm]{figs/git-branch2}
+    \includegraphics<2>[width=9cm]{figs/git-checkout2}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Branching.}
+  \begin{columns}
+    \begin{column}{0.6\linewidth}
+      \begin{center}
+        \includegraphics[width=6.5cm]{figs/18333fig0314c-tn}
+      \end{center}
+    \end{column}
+    \begin{column}{0.45\linewidth}
+      \begin{center}
+        \texttt{\textbf{git checkout master}}\\
+        \texttt{\textbf{git merge hotfix}}\\
+      \end{center}
+    \end{column}
+  \end{columns}
+  \begin{center}
+    \includegraphics[width=9cm]{figs/git-branch2}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Branching.}
+  \begin{columns}
+    \begin{column}{0.6\linewidth}
+      \begin{center}
+        \includegraphics[width=6cm]{figs/18333fig0315-tn}
+      \end{center}
+    \end{column}
+    \begin{column}{0.4\linewidth}
+      \begin{center}
+        \texttt{\textbf{git checkout iss53}}\\
+        \texttt{\textbf{git commit (C5)}}
+      \end{center}
+    \end{column}
+  \end{columns}
+  \begin{center}
+    \includegraphics[width=9cm]{figs/git-checkout}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Branching.}
+  \begin{columns}
+    \begin{column}{0.6\linewidth}
+      \begin{center}
+        \includegraphics[width=6cm]{figs/18333fig0317-tn}
+      \end{center}
+    \end{column}
+    \begin{column}{0.45\linewidth}
+      \begin{center}
+        \texttt{\textbf{git checkout master}}\\
+        \texttt{\textbf{git merge iss53}}
+      \end{center}
+    \end{column}
+  \end{columns}
+  \begin{center}
+    \includegraphics[width=9cm]{figs/git-branch2}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Contributing through GitHub}
+  \begin{figure}
+    \centering
+    Scenario 3: contributing to a software project hosted on GitHub.
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Contributing through GitHub}
+  \textbf{Q:} Have you ever heard of GitHub?
+  \includegraphics[width=11cm]{figs/github}
+  \begin{block}{What is GitHub?}
+    \begin{itemize}
+    \item Wikipedia: \emph{``GitHub is a web-based hosting service for
+        software development projects that use \git''}.
+      % remember to mention that now it is not just for git, but also
+      % svn and mercurial (thanks Zbyszek).
+    \item 5 millions repositories (Jan 2013).
+    \item Commercial...
+    \item ...but friendly to Free / Open Source software projects.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Contributing through GitHub}
+  \begin{block}{Assumptions}
+    \begin{itemize}
+    \item You use a software and feel ready to contribute to it.
+    \item The software project is hosted on \url{http://github.com}
+    \end{itemize}
+  \end{block}
+  \begin{block}{Intuitive Idea}
+    \begin{itemize}
+    \item You \textbf{do not push} your changes to the main
+      repository.
+    \item Instead you create a public copy (\textbf{fork}) of the main
+      repository...
+    \item ...and then push your changes to that.
+    \item Then you ask the owners of the main repository if they like
+      your changes and want to merge them (\textbf{pull request}).
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Contributing through GitHub. Not for everyone ;-)}
+\includegraphics[width=8cm]{figs/linus-on-pull-requests}
+\begin{center}
+  \url{https://github.com/torvalds/linux/pull/17}
+\end{center}
+\end{frame}
+
+\begin{frame}{Contributing through GitHub: Recipe I}
+  \begin{enumerate}
+  \item \textbf{Register} on \url{http://github.com}
+  \item \textbf{Visit} the GitHub page of the software project and
+    \textbf{Fork} it:
+    \hbox{\hspace{-1cm}\includegraphics[width=11cm]{figs/github-fork}}
+  \item \textbf{Clone your copy} of the project on your computer.
+    \begin{center}
+      \begin{footnotesize}
+        \texttt{\textbf{git clone git@github.com:<login>/<project>.git}}
+      \end{footnotesize}
+    \end{center}
+  \item Create a \textbf{branch} to host your improvements.
+    \begin{itemize}
+    \item \texttt{\textbf{git branch <new-feature>}} \includegraphics[height=0.55cm]{figs/github-branch}
+    \item \texttt{\textbf{git checkout <new-feature>}}
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Contributing through GitHub: Recipe II}
+  \begin{enumerate}
+    \setcounter{enumi}{4}
+  \item Add your improvements.
+    \begin{itemize}
+    \item \texttt{\textbf{git add <new-file>}}
+    \item \texttt{\textbf{git commit -m ...}}
+    \end{itemize}    
+  \item \textbf{Push} your improvements.
+    \begin{center}
+      \texttt{\textbf{git push origin <new-feature>}}
+    \end{center}
+  \item Send a \textbf{pull request}.
+    \includegraphics[height=0.55cm]{figs/github-compare-and-pull-request}
+    \begin{center}
+      \hbox{\hspace{-0cm}\includegraphics[width=11cm]{figs/github-pull-request}}
+    \end{center}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Contributing through GitHub}
+  \begin{center}
+    Detailed Explanation
+\end{center}
+\end{frame}
+
+\begin{frame}{Contributing through GitHub: Detailed Explanation}
+  \includegraphics<1>[width=11.5cm]{figs/pull-request-0}
+  \includegraphics<2>[width=11.5cm]{figs/pull-request3-1}
+  \includegraphics<3>[width=11.5cm]{figs/pull-request3-2}
+  \includegraphics<4>[width=11.5cm]{figs/pull-request3-3}
+  \includegraphics<5>[width=11.5cm]{figs/pull-request3-4}
+  \includegraphics<6>[width=11.5cm]{figs/pull-request3-5}
+  \includegraphics<7>[width=11.5cm]{figs/pull-request-4}
+  \includegraphics<8>[width=11.5cm]{figs/pull-request-5}
+  \begin{center}
+    \only<1>{There is a software project hosted on remote GitHub
+      repository (\textbf{upstream}). You want to improve it.}
+    \only<2>{So you \textbf{fork} it by creating a (remote) copy of
+      it:\\
+        \textcolor{grey}{\texttt{\textbf{git clone -{}-bare
+            <UPSTREAM\_URL>}}}}
+    \only<3>{Now you clone your copy on your local computer:\\
+      \texttt{\textbf{git clone <ORIGIN\_URL>}}}
+    \only<4>{\texttt{\textbf{git remote add upstream
+          <UPSTREAM\_URL>}}\\
+    \texttt{\textbf{git fetch upstream}}}
+    \only<5>{\texttt{\textbf{git branch new-feature upstream/master}}\\
+      \texttt{\textbf{git checkout new-feature}}}
+    \only<6>{\texttt{\textbf{git add ... \\git commit ...}}}
+    \only<7>{publish your new feature:\\
+      \texttt{\textbf{git push origin new-feature}}} 
+    \only<8>{Notify the owners of the main repository about
+      \texttt{\textbf{new-feature}}\\
+      they: \texttt{\textbf{git fetch}} + (eventually)
+      \texttt{\textbf{git merge}}}
+  \end{center}
+\end{frame}
+
+% \begin{frame}{Contributing through GitHub. Demo.}
+%   \begin{center}
+%     Demo: Live.
+%   \end{center}
+% \end{frame}
+
+% \begin{frame}{Extras. \alert{OPTIONAL}}
+%   \begin{itemize}
+%   \item Local branching + demo.
+%   \item Setting up a remote shared repository + demo.
+%   \end{itemize}
+% \end{frame}
+
+\begin{frame}{Setting up a remote+shared repository. \alert{OPTIONAL}}
+  \begin{center}
+    GOAL: I want to share my local repository so others can \texttt{\textbf{push}}.
+  \end{center}
+  ``Why can't I just \emph{extend permissions} in my \textbf{local} repo?''
+  \begin{itemize}
+  \item Yes you can...
+  \item ...but your colleagues will not push (\alert{read-only}).
+  \end{itemize}
+  \begin{center}
+    To have it \alert{read-write}: set up a \textbf{remote}
+    \emph{shared} repository.
+  \end{center}
+  \begin{figure}
+    \centering
+    \includegraphics[width=9cm]{figs/workflow-a}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Setting up a remote+shared repository. \alert{OPTIONAL}}
+  You have a local repository and want to share it
+  (\texttt{\textbf{ssh}}) from a remote server on which your
+  colleagues already have access.
+  \begin{block}{On \emph{remote} server create
+      \textbf{bare}+\textbf{shared} repository:}
+    \begin{itemize}
+    \item \texttt{\textbf{mkdir newproject}}
+    \item set up proper \emph{group} permissions: \texttt{\textbf{chmod g+rws newproject}}
+    \item \texttt{\textbf{cd newproject}}
+    \item \texttt{\textbf{git \alert{-{}-bare} init \alert{-{}-shared=group}}}
+    \end{itemize}
+  \end{block}
+  \begin{block}{On \emph{local} machine push your repository to remote:}
+    \begin{itemize}
+    \item \texttt{\textbf{git remote add origin }}
+          \begin{center}
+            \texttt{\textbf{ssh://remote.com/path/newproject}}
+      \end{center}
+    \item \texttt{\textbf{git push \alert{-u} origin master}}
+    \end{itemize}
+  \end{block}
+  Everybody clones the shared repository:
+  \begin{center}
+    \texttt{\textbf{git clone ssh://remote.com/path/newproject}}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Setting up a remote+shared repository. \alert{OPTIONAL}}
+  \begin{center}
+    Demo: \texttt{\textbf{demo\_git\_setup\_remote.txt}}.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Credits}
+  \begin{itemize}
+  \item \textbf{Rike-Benjamin Schuppner}
+  \item Zbigniew J\k{e}drzejewski-Szmek
+  \item Tiziano Zito
+  \item Bastian Venthur
+  \item \url{http://progit.com}
+  \item \url{apcmag.com}
+  \item \url{lwn.net}
+  \item \url{http://www.markus-gattol.name/ws/scm.html}
+  \item \url{http://matthew-brett.github.io/pydagogue/gitwash/git_development.html}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{I want to know more about \git!}
+  Understanding how \git works:
+  \begin{itemize}
+  \item \git foundations, by Matthew Brett:
+    \small
+    \url{http://matthew-brett.github.com/pydagogue/foundation.html}
+  \item  The \git parable, by Tom Preston-Werner:
+    \small
+  \url{http://tom.preston-werner.com/2009/05/19/the-git-parable.html}
+  \end{itemize}
+  Excellent guides:
+  \begin{itemize}
+  \item ``Pro Git'' book: \url{http://git-scm.com/book} (FREE)
+  \item \git magic: \url{http://www-cs-students.stanford.edu/~blynn/gitmagic/}
+  \end{itemize}
+  Contributing to a project hosted on GitHub:
+  \begin{itemize}
+  \item ``Gitwash'', by Matthew Brett:
+    \small
+    \url{http://matthew-brett.github.io/pydagogue/gitwash/git_development.html}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Cool Stuff}
+Gource:
+  \begin{center}
+    \url{http://code.google.com/p/gource/}
+  \end{center}
+\end{frame}
+
+\begin{frame}{License}
+  \begin{center}
+    Copyright Emanuele Olivetti, 2014
+  \end{center}
+  \vspace{1em}
+  \begin{center}
+    This presentation is distributed under the license\\
+    \textbf{Creative Commons \emph{Attribution} 3.0}\\
+    \url{https://creativecommons.org/licenses/by/3.0/}
+  \end{center}
+  \vspace{1em}
+  \begin{center}\small
+    The diagrams of the branching example are taken from \emph{Pro
+      Git}, (copyright S.Chacon, 2009) and are distributed under the
+    license Creative Commons 3.0 Attribution-Non Commercial-Share
+    Alike.
+  \end{center}
+\end{frame}
+
+\end{document}
