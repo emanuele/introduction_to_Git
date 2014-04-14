@@ -1,0 +1,188 @@
+# git exercise. Multiple developers and one remote shared repository.
+
+# Instructions: below you can find a list of steps you are requested
+# to follow using a shell and issuing the appropriate git
+# commands. You are requested to write down those same commands within
+# this text file just after each instruction item. This will help you
+# to keep track of what you did and to discuss with tutors. This file
+# is a helpful place where to store your comments and notes about the
+# exercise.
+
+##############################################
+# Scenario 2a : "user of a remote repository". 
+##############################################
+
+# In this scenario you are just users of a remote repository where one
+# or more developers push the code.
+
+# Clone the git repository 
+# https://github.com/emanuele/git-exercise.git
+
+git clone https://github.com/emanuele/git-exercise.git
+
+# Enter the 'git-exercise' directory and check the status of the
+# repository "git-exercise".
+
+cd git-exercise
+git status
+
+# Ask git about the URL of the remote repository.
+
+git remote -v
+
+# Read and execute social_network.py to understand what it does.
+
+cat social_network.py
+python social_network.py
+
+# From time to time new code is pushed by developers towards the
+# remote shared repository. You want to fetch these updates to your
+# local repository. (This might not happen in this very moment, but
+# keep your fingers crossed or try fetching multiple times).
+
+git fetch
+
+# Inspect how the logs changes accordingly.
+
+git log
+
+# See the logs from the graphical interface. It is more instructive if
+# you see all possible branches (hint: use "--all" flag).
+
+gitk --all
+
+# Merge the updates within your working tree. Hint: you might need to
+# specify "origin/master" to indicate from where to retrieve updates.
+
+git merge origin/master
+
+# Inspect how the logs changes accordingly.
+
+git log
+
+# Execute the script social_network.py again to see the effects of
+# the latest updates.
+
+python social_network.py
+
+# See what changed after merging, from the graphical interface.
+
+gitk --all
+
+# Go back to the previous commit. Hint: the last commit is called
+# HEAD, the last but one HEAD~1, then HEAD~2, etc.
+
+git reset --hard HEAD~1
+
+# Verify that the last updates are not in the logs anymore.
+
+git log
+
+# Verify that the last updates are not merged. Use the graphical
+# interface.
+
+gitk --all
+
+# Pull the latest changes and merge them immediately
+
+git pull
+
+# Verify that merge succeeded from the graphical interface.
+
+gitk --all
+
+# Verify that the logs show the latest pull.
+
+git log
+
+
+######################################################
+# Scenario 2b: "local developer of a remote project"
+######################################################
+
+# Task 1: create a new file within the directory "people/" called
+# after your name and surname: <name.surname>.txt . Within that file
+# write a short list of people you know (other students, lecturers,
+# friends, family etc.)  one name per line in the form of 
+# "name surname".
+
+cat > people/emanuele.olivetti.txt <<EOF
+tiziano zito
+rike benjamin schuppner
+michael hanke
+elefterios garyfallidis
+EOF
+
+# Execute social_network.py and check that it correctly shows the
+# information that you have just provided.
+
+python social_network.py
+
+# Add your new file people/<name.surname.txt> to the staging area.
+
+git add people/emanuele.olivetti.txt
+
+# Commit changes in the staging area.
+
+git commit -m "Added Emanuele."
+
+# Check how the log changes accordingly, both from the shell command
+# and the graphical interface.
+
+git log
+gitk --all
+
+####################################################
+# Scenario 2c: "from local developer to contributor"
+####################################################
+
+# You want to share your recent changes with other developers. So now
+# you push them remotely. WARNING: the remote repository could have
+# recent updates from other developers that you do not have yet, so
+# your push attempt might fail. In that case you need to pull
+# first. But it instructive to try to push first and see the error.
+
+git push # an error is expected here!
+git pull
+git push
+
+# See how the logs of all branches (-all) reflects your push.
+
+gitk --all
+
+
+#########################
+# Scenario 2d: conflicts!
+#########################
+
+# Task 2: you want to add a new feature to the social network graph: a
+# better title. Edit social_network.py and improve the title of the
+# graph.
+
+emacs social_network.py
+
+# Execute social_network.py to verify that your code works well.
+
+python social_network.py
+
+# Commit changes to your local repository.
+
+git commit social_network.py -m "Added cool title."
+
+# Pull from the remote repository before pushing.
+
+git pull
+
+# WARNING: a conflict could raise. Resolve it by editing the
+# appropriate file. Then add and commit the change to resolve the
+# conflict.
+
+emacs social_network.py
+python social_network.py
+git add social_network.py
+git commit -m "Fixed conflicting titles."
+
+# Try again to send your changes to the other developers.
+
+git pull
+git push

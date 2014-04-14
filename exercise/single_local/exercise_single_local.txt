@@ -1,0 +1,172 @@
+# git exercise. Single developer and local repository.
+
+# Instructions: below you can find a list of steps that you are
+# requested to follow using a shell and issuing the appropriate git
+# commands. Please write down those same commands within this text
+# file just after each instruction item. This will help you to keep
+# track of what you did and to discuss with tutors. Note: this file is
+# a helpful place where to store your comments and notes about the
+# exercise.
+
+
+# Run the 'git' command and read carefully the output. It is a quick
+# way to revise some of the contents of the lecture.
+
+git
+
+# Ask git about what it knows of the current directory. Hint: in git
+# terminology this is called "status". It is expected that git knows
+# nothing about the current directory. Isn't it?
+
+git status
+
+# It is time to introduce yourself to git. Set the global git
+# variables "user.name" and "user.email" according your personal
+# information. Hint: check out the slides of the lecture.
+
+git config --global user.name "your name here"
+git config --global user.email "your email here"
+
+# Verify that git has correctly stored your name and email. Hint: read
+# "git help config" to find out the way to get them.
+
+git config user.name
+git config user.email
+git config -l
+
+# Create a proper directory where you want to host a simple project
+# named "kindergarten". The current directory (e.g., home) is usually
+# fine but you could want a more meaningful place. Then move into the
+# directory you created. Just remember that all files and directories
+# in /tmp/ are thrown away at each reboot.
+
+cd
+mkdir kindergarten
+cd kindergarten
+
+# Create a new git repository within the current directory.
+
+git init
+
+# Verify that you have a brand new ".git/" directory full of
+# interesting things.
+
+ls -al .
+ls -al .git/
+
+# Ask git about the status and check out what changed with respect to
+# the last time you issued that command.
+
+git status
+
+# Create a file named hello.py that prints some salutation (unexpected
+# uh? :-) ). Use your favourite editor.
+
+echo "print 'hello.'" > hello.py
+
+# Ask git about the status and check out what changed with respect to
+# the last time you issued that command.
+
+git status
+
+# Put hello.py in the staging area.
+
+git add hello.py
+
+# Ask git about status and check out what changed with respect to the
+# last time you issued that command.
+
+git status
+
+# Now record changes to the repository.
+
+git commit -m "My first commit. A big step for the mankind."
+
+# Check status again, it is instructive.
+
+git status
+
+# Edit hello.py some more. Like importing numpy and printing some
+# random numbers, like np.random.rand(3).
+
+echo "import numpy as np" >> hello.py
+echo "print np.random.rand(3)" >> hello.py
+
+# See how the status changes accordingly.
+
+git status
+
+# Show changes between current and staged files.
+
+git diff
+
+# Add changes into the staging area (index).
+
+git add hello.py
+
+# Show how the status changes accordingly:
+
+git status
+
+# Edit again hello.py , e.g., adding another print statement.
+
+echo "print np.eye(4)" >> hello.py
+
+# Commit *only* changes from the staging area:
+
+git commit -m "Improved docstring."
+
+# Verify that changes not added to the staging area were not recorded:
+
+git diff
+
+# Commit all changes in hello.py without going through the staging
+# area:
+
+git commit hello.py -m "Added beautiful eyes."
+
+# Edit hello.py again adding some lines, the create a new file
+# clock.py which imports the module 'time' and prints 'time.ctime()'.
+
+echo "print np.subtract.outer(np.random.rand(3),np.random.rand(2))" >> hello.py
+echo "import time" > clock.py
+echo "print time.ctime()" >> clock.py
+
+# Inspect the status and the changes.
+
+git status
+git diff
+
+# Commit all the changes made in all files skipping the staging area
+# where possible.
+
+git add clock.py
+git commit -a -m "Added a swiss clock and improved hello.py."
+
+# See the logs of all commits.
+
+git log
+
+# See the logs of all commits with the git GUI.
+
+gitk
+
+# Go crazy and mess with your files. Overwrite the content and/or
+# remove files.
+
+echo "printttt 'I hate you...'" > hello.py
+rm clock.py
+
+# Oh no! What I've done! Shame on me! Verify the status and the
+# differences.
+
+git status
+git diff
+
+# Get rid of the last untracked changes and verify that everything is
+# back to normal. And relax: your work is safe.
+
+git checkout .
+ls
+git status
+git diff
