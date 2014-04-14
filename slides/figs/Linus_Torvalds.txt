@@ -1,0 +1,1 @@
+from http://apcmag.com/linux_2620_kernel_is_born_whats_inside.htm
