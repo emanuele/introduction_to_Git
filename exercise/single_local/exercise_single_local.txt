@@ -152,6 +152,12 @@ git commit -a -m "Added a swiss clock and improved hello.py."
 
 git log
 
+# See the logs with useful commandline switch (oneline to shorten
+# commit message, graph to show a graph of the commits, decorate to
+# show HEAD, tags and branch names, all to show all branches)
+
+git log --oneline --graph --decorate --all
+
 # See the logs of all commits with the git GUI.
 
 gitk
