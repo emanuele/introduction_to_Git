@@ -969,6 +969,19 @@ How to resolve conflicts.
   \end{center}
 \end{frame}
 
+\begin{frame}{remote+shared repository is not secure. \alert{OPTIONAL}}
+  \begin{center}
+    An user can intentionally (\texttt{ssh + rm}) or less
+    intentionally \texttt{git push --force} corrupt or destroy data on
+    the remote repositories.
+
+    For this reason there are specialized tools to enforce fine
+    grained access, see for example:
+    \url{http://gitolite.com/gitolite/}.
+  \end{center}
+\end{frame}
+
+
 \begin{frame}{Credits}
   \begin{itemize}
   \item \textbf{Rike-Benjamin Schuppner}
