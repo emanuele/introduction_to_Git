@@ -6,7 +6,7 @@ cd /tmp/
 # Run git. It's harmless :-)
 git
 
-# Ask git what it knows about the current directory its parent
+# Ask git what it knows about the current directory and its parent
 # directories:
 git status
 

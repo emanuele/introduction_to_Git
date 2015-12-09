@@ -42,7 +42,7 @@ gitk --all
 
 # now we want to step back to how it was before the last commit.
 git reset --hard HEAD~1
-# or alternatively, use SHA1 or the first clone
+# or alternatively, use SHA1 of the first clone
 
 # the logs reflect that we stepped back:
 git log
