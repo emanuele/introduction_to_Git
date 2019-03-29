@@ -186,3 +186,8 @@ git commit -m "Fixed conflicting titles."
 
 git pull
 git push
+
+# git can help you to resolve the conflicts using specialized tools
+# invoke it with
+
+git mergetool

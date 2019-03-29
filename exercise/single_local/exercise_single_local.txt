@@ -34,6 +34,11 @@ git config user.name
 git config user.email
 git config -l
 
+# Turn on the coloring on console command (visual aids help to find
+# out relevant information quicker)
+
+git config --global color.ui true
+
 # Create a proper directory where you want to host a simple project
 # named "kindergarten". The current directory (e.g., home) is usually
 # fine but you could want a more meaningful place. Then move into the
@@ -146,6 +151,12 @@ git commit -a -m "Added a swiss clock and improved hello.py."
 # See the logs of all commits.
 
 git log
+
+# See the logs with useful commandline switch (oneline to shorten
+# commit message, graph to show a graph of the commits, decorate to
+# show HEAD, tags and branch names, all to show all branches)
+
+git log --oneline --graph --decorate --all
 
 # See the logs of all commits with the git GUI.
 
