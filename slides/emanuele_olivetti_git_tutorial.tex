@@ -385,7 +385,7 @@ Date:   Wed Sep 15 00:08:46 2010 +0200
 \begin{frame}{Single+Local \git. Diff. \alert{OPTIONAL}}
   \begin{block}{\textbf{Q:} ``\texttt{\textbf{git add}}'' then
       ``\texttt{\textbf{git diff}}''. What output?}
-    \texttt{\textbf{git diff -{}-cached}} shows differences between
+    \texttt{\textbf{git diff -{}-staged}} shows differences between
     index and last commit (\alert{HEAD}).
   \end{block}
   \begin{figure}
@@ -968,6 +968,19 @@ How to resolve conflicts.
     Demo: \texttt{\textbf{demo\_git\_setup\_remote.txt}}.
   \end{center}
 \end{frame}
+
+\begin{frame}{remote+shared repository is not secure. \alert{OPTIONAL}}
+  \begin{center}
+    An user can intentionally (\texttt{ssh + rm}) or less
+    intentionally \texttt{git push --force} corrupt or destroy data on
+    the remote repositories.
+
+    For this reason there are specialized tools to enforce fine
+    grained access, see for example:
+    \url{http://gitolite.com/gitolite/}.
+  \end{center}
+\end{frame}
+
 
 \begin{frame}{Credits}
   \begin{itemize}
